@@ -101,7 +101,8 @@ class OrderController extends Controller {
           if (!qr_data) {
             throw '订单金额的二维码不存在'; // 订单金额的二维码不存在
           }
-          ctx.body = await ctx.service.order.createOrder(qr_data.get('qr_url'), qr_data.get('qr_price'));
+
+          ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(qr_data.get('qr_url'), qr_data.get('qr_price')) };
         } else {
           // 此金额已经被使用了，查询其他二维码
           let newPrice = [];
@@ -124,15 +125,15 @@ class OrderController extends Controller {
             throw '系统火爆，请过1-3分钟后下单!';
           }
           const index = Math.floor((Math.random() * (newPrice.length-1)));
-          ctx.body = await ctx.service.order.createOrder(alipay_url[index].dataValues.qr_url, alipay_url[index].dataValues.qr_price);
+          ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(alipay_url[index].dataValues.qr_url, alipay_url[index].dataValues.qr_price)};
         }
       } else if (order_type === 'alipay') {
-        const alipays = 'alipays://platformapi/startapp?appId=20000067&appClearTop=false&startMultApp=YES&showTitleBar=YES&showToolBar=NO&showLoading=YES&pullRefresh=YES&url='; 
+        const alipays = 'alipays://platformapi/startapp?appId=20000067&appClearTop=false&startMultApp=YES&showTitleBar=YES&showToolBar=NO&showLoading=YES&pullRefresh=YES&url=';
         const url = domain + '/alipay.html?u=' + alipayUserId + '&a=';
         let tempPrice = order_price;
         if (orderPriceStatus.length === 0) {
           // 此金额可被使用
-          ctx.body = await ctx.service.order.createOrder(alipays + encodeURIComponent(url + tempPrice), tempPrice);
+          ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(alipays + encodeURIComponent(url + tempPrice), tempPrice)};
         } else {
           // 此金额已经被使用了，查询其他二维码
           let newPrice = [];
@@ -153,7 +154,8 @@ class OrderController extends Controller {
           if (newPrice.length === 0) { // 支付宝立减金额达到上限
             throw '系统火爆，请过1-3分钟后下单!';
           }
-          ctx.body = await ctx.service.order.createOrder(alipays + encodeURIComponent(url + newPrice[index]), newPrice[index]);
+
+          ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(alipays + encodeURIComponent(url + newPrice[index]), newPrice[index])};
         }
       }
     } catch (e) {
