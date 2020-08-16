@@ -107,8 +107,9 @@ class OrderController extends Controller {
           // 此金额已经被使用了，查询其他二维码
           let newPrice = [];
           // 根据设置的随机立减查询二维码
+          tempPrice = parseFloat(tempPrice);
           for (let i = 0; i < payMax.wx; i++) {
-            newPrice.push((tempPrice -= 0.01).toFixed(2));
+            newPrice.push((tempPrice += 0.01).toFixed(2));
           }
           // 获取有效期内所有的未支付订单
           const QrCodeResult = await ctx.service.order.find_more_price(newPrice, order_type);
@@ -138,6 +139,7 @@ class OrderController extends Controller {
           // 此金额已经被使用了，查询其他二维码
           let newPrice = [];
           // 根据设置的随机立减查询二维码
+          tempPrice = parseFloat(tempPrice);
           for (let i = 0; i < payMax.alipay; i++) {
             newPrice.push((tempPrice += 0.01).toFixed(2));
           }
