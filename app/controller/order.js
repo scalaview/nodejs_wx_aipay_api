@@ -128,13 +128,12 @@ class OrderController extends Controller {
           ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(alipay_url[index].dataValues.qr_url, alipay_url[index].dataValues.qr_price)};
         }
       } else if (order_type === 'alipay') {
+        const alipays = 'alipays://platformapi/startapp?appId=20000067&appClearTop=false&startMultApp=YES&showTitleBar=YES&showToolBar=NO&showLoading=YES&pullRefresh=YES&url=';
         const url = domain + '/alipay.html?u=' + alipayUserId + '&a=';
-        // const alipays = 'alipays://platformapi/startapp?appId=20000067&appClearTop=false&startMultApp=YES&showTitleBar=YES&showToolBar=NO&showLoading=YES&pullRefresh=YES&url=';
         let tempPrice = order_price;
         if (orderPriceStatus.length === 0) {
-          let alipays = `alipays://platformapi/startapp?appId=09999988&actionType=toAccount&goBack=${encodeURIComponent(url + tempPrice)}&amount=${tempPrice}&userId=${alipayUserId}&memo=express_recharge`;
           // 此金额可被使用
-          ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(alipays, tempPrice)};
+          ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(alipays + encodeURIComponent(url + tempPrice), tempPrice)};
         } else {
           // 此金额已经被使用了，查询其他二维码
           let newPrice = [];
@@ -156,9 +155,7 @@ class OrderController extends Controller {
             throw '系统火爆，请过1-3分钟后下单!';
           }
 
-          let alipays = `alipays://platformapi/startapp?appId=09999988&actionType=toAccount&goBack=${encodeURIComponent(url + newPrice[index])}&amount=${newPrice[index]}&userId=${alipayUserId}&memo=express_recharge`;
-
-          ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(alipays, newPrice[index])};
+          ctx.body = { code: 1, msg: 'success', data: await ctx.service.order.createOrder(alipays + encodeURIComponent(url + newPrice[index]), newPrice[index])};
         }
       }
     } catch (e) {
